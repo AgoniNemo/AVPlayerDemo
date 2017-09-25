@@ -257,6 +257,26 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
         
     }
     
+    /// MARK:外部方法播放
+    func playerControlPlay() -> Void {
+        self.activityView.isHidden = false
+    }
+    
+    /// MARK:外部方法暂停
+    func playerControlPause() -> Void {
+        
+    }
+    
+    func fullScreenChanged(_ isFullScreen:Bool) -> Void {
+        _frame = self.bounds
+        
+        self.setFrame()
+        
+        self.fullScreenButton.isSelected = isFullScreen
+        
+        self.videoSlider.fullScreenChanged(isFullScreen: isFullScreen)
+        
+    }
     
     func timeFormatted(totalSeconds:Int) -> String {
         
