@@ -13,7 +13,7 @@ class Slider: UIControl {
     
     var _frame:CGRect = CGRect()
     
-    /// MARK: 播放进度
+    // MARK: 播放进度
     var value:CGFloat?{
     
         set(v){
@@ -29,7 +29,7 @@ class Slider: UIControl {
         
     }
     
-    /// MARK: 缓冲进度
+    // MARK: 缓冲进度
     var bufferProgress:CGFloat?{
         set(progress){
             self.bufferProgress = progress
@@ -42,7 +42,7 @@ class Slider: UIControl {
     
     }
     
-    /// MARK: 轨道高度
+    // MARK: 轨道高度
     var trackHeight:CGFloat?{
         didSet{
             self.setFrame()
@@ -50,12 +50,12 @@ class Slider: UIControl {
         
     }
     
-    /// MARK: 滑块触发大小的宽高
+    // MARK: 滑块触发大小的宽高
     var thumbTouchSize:CGFloat = 0
-    /// MARK: 滑块可视大小的宽高
+    // MARK: 滑块可视大小的宽高
     var thumbVisibleSize:CGFloat = 10
     
-    /// MARK: 轨道的颜色
+    // MARK: 轨道的颜色
     var trackColor:UIColor?{
         
         set(color){
@@ -66,7 +66,7 @@ class Slider: UIControl {
     
     
     
-    /// MARK: 缓冲的颜色
+    // MARK: 缓冲的颜色
     var bufferColor:UIColor?{
         
         set(color){
@@ -76,7 +76,7 @@ class Slider: UIControl {
         get{ return self.bufferColor }
     }
     
-    /// MARK: 播放进度的颜色
+    // MARK: 播放进度的颜色
     var thumbValueColor:UIColor?
 
     

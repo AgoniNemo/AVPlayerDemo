@@ -242,19 +242,22 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
     }
 
     func videoPlayerDidLoading() -> Void {
-        
+        debugPrint("播放失败")
+        self.activityView.startAnimating()
     }
     
     func videoPlayerDidBeginPlay() -> Void {
-        
+        debugPrint("播放开始")
+        self.activityView.stopAnimating()
     }
     
     func videoPlayerDidEndPlay() -> Void {
-        
+        debugPrint("播放结束")
     }
     
     func videoPlayerDidFailedPlay() -> Void {
-        
+        debugPrint("播放失败")
+        self.activityView.stopAnimating()
     }
     
     /// MARK:外部方法播放
@@ -264,7 +267,7 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
     
     /// MARK:外部方法暂停
     func playerControlPause() -> Void {
-        
+        self.playButton.isHidden = true
     }
     
     func fullScreenChanged(_ isFullScreen:Bool) -> Void {
