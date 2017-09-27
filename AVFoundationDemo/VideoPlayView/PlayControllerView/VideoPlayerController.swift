@@ -69,7 +69,7 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
     
     var fastFastForwardAndRewind_block:((CGFloat)->())?;
     
-    var backButtonClick_block:(()->())?;
+    var backButtonClick_block:((Void)->(Void))?;
     var fullScreenButtonClick_block:(()->())?;
     
     private var _frame:CGRect = CGRect.init();
