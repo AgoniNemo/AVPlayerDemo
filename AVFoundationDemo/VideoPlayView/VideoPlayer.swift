@@ -92,11 +92,15 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
     }
     
     func playVideo() -> Void {
-        
+        self.isPlaying = true
+        self.playButtonState = true
+        self.player?.play()
     }
     
     func pauseVideo() -> Void {
-        
+        self.playButtonState = false
+        self.player?.pause()
+        self.videoPlayControl.playerControlPause()
     }
     
     func stopVideo() -> Void {
@@ -115,8 +119,10 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
 
     }
     func fullScreen(_ isFullScreen:Bool) -> Void {
-        
-        
+        self.videoShowView.frame = (self.backgroundView?.bounds)!
+        self.videoPlayControl.frame = (self.backgroundView?.bounds)!
+        self.currentPlayerLayer?.frame = CGRect.init(x: 0, y: 0, width: videoShowView.frame.width, height: videoShowView.frame.height)
+        self.videoPlayControl.fullScreenChanged(isFullScreen)
     }
     
     private func getUrlToPlayVideo(_ url:URL) -> Void {
@@ -242,10 +248,14 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
     
     @objc func appDidEnterBackground() -> Void {
         
+        if self.stopWhenAppDidEnterBackground == true {
+            self.pauseVideo()
+        }
+        
     }
 
     @objc func appDidEnterForeground() -> Void {
-        
+        self.playVideo()
     }
     
     func seekToTimePlay(_ time:CGFloat) -> Void {
@@ -266,7 +276,16 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
         
     }
     
-    func play() -> Void {
+    func playForActivity() -> Void {
+        if self.playButtonState {
+            self.player?.play()
+        }
+        self.isBufferEmpty = false
+        self.isPlaying = true
+        self.videoPlayControl.videoPlayerDidBeginPlay()
+    }
+    
+    private func play() -> Void {
         if self.playButtonState == true {
             self.player?.play()
             self.videoPlayControl.playerControlPlay()
@@ -278,11 +297,11 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
         var show = true
         
         for timeRangeDic in self.loadedTimeRangeArr {
-            let start = (timeRangeDic["start"]! as NSString).floatValue
-            let duration = (timeRangeDic["duration"]! as NSString).floatValue
+            let start = Float(timeRangeDic["start"]!)!
+            let duration = Float(timeRangeDic["duration"]!)
             
-            if ((start < time) && (time < start + duration)) {
-                show = true;
+            if ((start < time) && (time < start + duration!)) {
+                show = false;
                 break;
             }
         }
@@ -294,8 +313,11 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
     
     func getLoadedTimeRange() -> [String:String] {
         
-        let loadedTimeRanges = self.currentPlayerItem?.loadedTimeRanges
-        let timeRange = loadedTimeRanges?.first?.timeRangeValue
+        guard let loadedTimeRanges = self.currentPlayerItem?.loadedTimeRanges else {
+            return ["start":"00","duration":"00"]
+        }
+        
+        let timeRange = loadedTimeRanges.first?.timeRangeValue
         let startSeconds = CMTimeGetSeconds((timeRange?.start)!);
         let durationSeconds = CMTimeGetSeconds((timeRange?.duration)!);
         
@@ -304,8 +326,123 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         
+        let playerItem = object as? AVPlayerItem
+        
+        if keyPath == "status" {
+            let status:AVPlayerItemStatus = (playerItem?.status)!
+
+            switch status {
+                case .readyToPlay:
+                    debugPrint("======== 准备播放")
+                    self.player?.isMuted = self.mute!
+                    self.play()
+                    self.handleShowViewSublayers()
+                case .failed:
+                    debugPrint("======== 播放失败")
+                case .unknown:
+                    debugPrint("======== 播放失败")
+                }
+        }else if keyPath == "loadedTimeRanges"{
+            let current = self.availableDuration()
+            let duration = playerItem?.duration
+            let totalDuration = CMTimeGetSeconds(duration!)
+            
+            let progress = current / totalDuration
+            
+            debugPrint("============== 缓冲进度 - \(progress)")
+            self.videoPlayControl.progress = CGFloat(progress)
+            self.videoPlayControl.totalTime = CGFloat(totalDuration)
+            self.duration = CGFloat(totalDuration)
+            self.currentBufferValue = CGFloat(current)
+            
+            self.handleBuffer()
+            
+        }else if keyPath == "playbackBufferEmpty"{
+            
+            self.isPlaying = false
+            self.isBufferEmpty = true
+            self.lastBufferValue = self.currentBufferValue
+            self.videoPlayControl.videoPlayerDidLoading()
+            
+            debugPrint("======== playbackBufferEmpty")
+        }else{
+            debugPrint("======== playbackFail")
+        }
+        
+        
     }
     
+    private func handleBuffer() -> Void {
+        
+        if self.playButtonState == true {
+            if self.isPlaying == false {
+                if self.currentBufferValue > self.lastBufferValue {
+                    if self.currentBufferValue - self.lastBufferValue > 5 {
+                        
+                        self.playForActivity()
+                        
+                    }else if self.currentBufferValue == self.duration {
+                    
+                        self.playForActivity()
+                        
+                    }else if self.currentBufferValue + self.lastBufferValue + 1 >= self.duration{
+                        
+                        self.playForActivity()
+                    }
+                }else{
+                    
+                    if self.currentBufferValue > 10 {
+                        self.playForActivity()
+                    }else if self.currentBufferValue == self.duration{
+                        self.playForActivity()
+                    }else if self.currentBufferValue + self.duration + 1 >= self.duration{
+                        self.playForActivity()
+                    }
+                    
+                }
+                
+            }else{
+                if self.currentBufferValue > self.lastBufferValue {
+                    if self.currentBufferValue - self.lastBufferValue > 5 {
+                        self.videoPlayControl.videoPlayerDidBeginPlay()
+                    }else if self.currentBufferValue == self.duration {
+                        self.videoPlayControl.videoPlayerDidBeginPlay()
+                    }else if self.currentBufferValue + self.lastBufferValue + 1 >= self.duration{
+                        self.videoPlayControl.videoPlayerDidBeginPlay()
+                    }
+                }else{
+                    if self.currentBufferValue > 10 {
+                        self.videoPlayControl.videoPlayerDidBeginPlay()
+                    }else if self.currentBufferValue == self.duration{
+                        self.videoPlayControl.videoPlayerDidBeginPlay()
+                    }else if self.currentBufferValue + self.duration + 1 >= self.duration{
+                        self.videoPlayControl.videoPlayerDidBeginPlay()
+                    }
+                }
+            
+            }
+        }
+        
+    }
+    
+    private func availableDuration() -> TimeInterval {
+        let loadedTimeRanges = self.currentPlayerItem?.loadedTimeRanges
+        let timeRange = loadedTimeRanges?.first?.timeRangeValue
+        
+        let startSeconds = CMTimeGetSeconds((timeRange?.start)!)
+        let durationSeconds = CMTimeGetSeconds((timeRange?.duration)!)
+        let result = startSeconds + durationSeconds
+        
+        return result
+        
+    }
+    
+    private func handleShowViewSublayers() -> Void {
+        for layer in videoShowView.subviews {
+            layer.layer.removeFromSuperlayer()
+        }
+        videoShowView.layer.addSublayer(self.currentPlayerLayer!)
+    }
     
     // MARK: - removeObserver
     

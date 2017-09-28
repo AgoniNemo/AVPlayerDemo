@@ -11,14 +11,16 @@ import MediaPlayer
 
 class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
 
+    private var _currentTime:CGFloat = 0.0
     var currentTime:CGFloat?{
         set(c){
+            _currentTime = c!
             if self._sliderIsTouching == false{
                 self.currentLabel.text = self.timeFormatted(totalSeconds: Int(c!))
             }
         }
         
-        get{ return self.currentTime }
+        get{ return self._currentTime }
         
     }
     
@@ -30,35 +32,42 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
     var _lastPoint:CGPoint = CGPoint.init()
     var _fastCurrentTime:CGFloat = 0
     
+    private var _totalTime:CGFloat = 0.0
     var totalTime:CGFloat?{
     
         set(t){
+            _totalTime = t!
             self.totalLabel.text = self.timeFormatted(totalSeconds: Int(t!))
         }
         
-        get{ return self.totalTime }
+        get{ return self._totalTime }
     }
+    
+    private var _playValue:CGFloat = 0.0
     
     //播放进度
     var playValue:CGFloat?{
     
         set(p){
+            _playValue = p!
             if self._sliderIsTouching == false{
                 self.videoSlider.value = p;
             }
         }
         
-        get{ return self.playValue }
+        get{ return self._playValue }
     
     }
     
+    private var _progress:CGFloat = 0.0
     //缓冲进度
     var progress:CGFloat?{
         set(t){
-            self.videoSlider.bufferProgress = progress
+            _progress = t!
+            self.videoSlider.bufferProgress = progress!
         }
         
-        get{ return self.progress }
+        get{ return self._progress }
     }
     
     private let TopHeight:CGFloat = 40
@@ -369,8 +378,8 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
     private lazy var fullScreenButton: UIButton = {
         
         let f = UIButton.init(type: .custom)
-        f.setImage(#imageLiteral(resourceName: "back.png"), for: .normal)
-        f.setImage(#imageLiteral(resourceName: "full_screen.png"), for: .selected)
+        f.setImage(UIImage.init(named: "normal_screen@2x.png"), for: .normal)
+        f.setImage(UIImage.init(named: "full_screen@2x.png"), for: .selected)
         f.addTarget(self, action: #selector(fullScreenButtonClick(_:)), for: .touchUpInside)
         self.topView.addSubview(f)
         

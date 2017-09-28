@@ -13,10 +13,15 @@ class Slider: UIControl {
     
     var _frame:CGRect = CGRect()
     
+    private var _bufferProgress:CGFloat = 0.0
+    private var _value:CGFloat = 0.0
+    
+    
     // MARK: 播放进度
     var value:CGFloat?{
     
         set(v){
+            _value = v!
             let value = self.valid(v!)
             
             if value != self.value {
@@ -25,20 +30,22 @@ class Slider: UIControl {
                 self.thumbValueImageView.frame = CGRect(x:0, y:(_frame.size.height - self.trackHeight!) * 0.5, width:value * _frame.size.width, height:self.trackHeight!)
             }
         }
-        get{ return self.value }
+        get{ return self._value }
         
     }
     
     // MARK: 缓冲进度
-    var bufferProgress:CGFloat?{
+    var bufferProgress:CGFloat{
         set(progress){
-            self.bufferProgress = progress
+            _bufferProgress = progress
             if progress != self.bufferProgress {
                 self.bufferProgress = progress
-                self.bufferImageView.frame = CGRect(x:0, y:(_frame.size.height - self.trackHeight!) * 0.5, width:progress! * _frame.size.width, height:self.trackHeight!)
+                self.bufferImageView.frame = CGRect(x:0, y:(_frame.size.height - self.trackHeight!) * 0.5, width:progress * _frame.size.width, height:self.trackHeight!)
             }
         }
-        get{ return self.bufferProgress }
+        get{            
+            return self._bufferProgress
+        }
     
     }
     
@@ -110,7 +117,7 @@ class Slider: UIControl {
     func setFrame() -> Void {
         self.trackImageView.frame = CGRect.init(x: 0, y: (_frame.size.height-self.trackHeight!)*0.5, width: _frame.size.width, height: self.trackHeight!)
         
-        self.bufferImageView.frame = CGRect.init(x: 0, y: (_frame.size.height-self.trackHeight!)*0.5, width: self.bufferProgress!*_frame.size.width, height: self.trackHeight!)
+        self.bufferImageView.frame = CGRect.init(x: 0, y: (_frame.size.height-self.trackHeight!)*0.5, width: self.bufferProgress*_frame.size.width, height: self.trackHeight!)
         
         self.thumbValueImageView.frame = CGRect.init(x: 0, y: (_frame.size.height-self.trackHeight!)*0.5, width: self.value!*_frame.size.width, height: self.trackHeight!)
         
