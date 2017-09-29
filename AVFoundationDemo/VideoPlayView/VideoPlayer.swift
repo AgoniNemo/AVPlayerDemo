@@ -33,20 +33,22 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
         }
         
         get{
-            return self.mute
+            return self._mute
         }
     }
     
     var stopWhenAppDidEnterBackground:Bool = true // default is YES
     
+    private var _videoSize = CGSize.init()
     // 可给定video尺寸大小,若尺寸超过view大小时作截断处理
     var videoSize:CGSize?{
         set(v){
+            _videoSize = v!
             if (self.currentPlayerLayer != nil) {
                 self.changePlayerLayerFrame(v!)
             }
         }
-        get{ return self.videoSize }
+        get{ return self._videoSize }
     }
     
     private var manager:DownloadManager?;       //数据下载器
@@ -108,7 +110,9 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
         self.player?.pause()
         self.player?.cancelPendingPrerolls()
         
-        if self.currentPlayerLayer != nil { self.currentPlayerLayer?.removeFromSuperlayer()}
+        if self.currentPlayerLayer != nil {
+            self.currentPlayerLayer?.removeFromSuperlayer()
+        }
         
         self.removeObserver()
         self.player = nil
@@ -266,6 +270,7 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
         let isShowActivity = self.judgeLoadedTimeIsShowActivity(Float(time))
         
         if isShowActivity {
+            self.showFailView(true)
             self.videoPlayControl.videoPlayerDidLoading()
         }
         self.isCanToGetLocalTime = true
@@ -317,9 +322,11 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
             return ["start":"00","duration":"00"]
         }
         
-        let timeRange = loadedTimeRanges.first?.timeRangeValue
-        let startSeconds = CMTimeGetSeconds((timeRange?.start)!);
-        let durationSeconds = CMTimeGetSeconds((timeRange?.duration)!);
+        guard let timeRange = loadedTimeRanges.first?.timeRangeValue else {
+            return ["start":"00","duration":"00"]
+        }
+        let startSeconds = CMTimeGetSeconds(timeRange.start);
+        let durationSeconds = CMTimeGetSeconds(timeRange.duration);
         
         return ["start":String.init(format: "%.2f", startSeconds),"duration":String.init(format: "%.2f", durationSeconds)]
     }
@@ -339,8 +346,10 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
                     self.handleShowViewSublayers()
                 case .failed:
                     debugPrint("======== 播放失败")
+                    self.showFailView(false)
                 case .unknown:
                     debugPrint("======== 播放失败")
+                    self.showFailView(false)
                 }
         }else if keyPath == "loadedTimeRanges"{
             let current = self.availableDuration()
@@ -368,6 +377,23 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
         }else{
             debugPrint("======== playbackFail")
         }
+        
+        
+    }
+    
+    func showFailView(_ b:Bool) -> Void {
+
+        self.failLable.isHidden = b
+        if b == true {
+            return
+        }
+        
+        let w:CGFloat = 80.0
+        let h:CGFloat = 20.0;
+        let x = ((self.backgroundView?.frame.width)!-w)/2
+        let y = ((self.backgroundView?.frame.height)!-h)/2
+        
+        self.failLable.frame = CGRect.init(x: x, y: y, width: w, height: h)
         
         
     }
@@ -477,6 +503,17 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
         return v
     }()
     
+    lazy var failLable: UILabel = {
+        let f = UILabel.init()
+        f.isUserInteractionEnabled = true
+        f.text = "播放失败！"
+        f.font = UIFont.systemFont(ofSize: 15)
+        f.textAlignment = .center
+        f.textColor = UIColor.white
+        self.backgroundView?.addSubview(f)
+        return f
+    }()
+    
     //用于控制视频播放界面的View
     lazy var videoPlayControl: VideoPlayerController = {
         let v:VideoPlayerController = VideoPlayerController.init(frame: (self.backgroundView?.bounds)!)
@@ -489,6 +526,7 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
         
         //全屏
         v.fullScreenButtonClick_block = {[weak self] ()-> () in
+            self?.showFailView(true)
             self?.delegate?.videoPlayerDidFullScreenButtonClick!()
         }
         

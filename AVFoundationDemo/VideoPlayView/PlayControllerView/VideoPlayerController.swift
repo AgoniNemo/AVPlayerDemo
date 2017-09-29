@@ -238,6 +238,7 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
     /// MARK:拖动中
     func sliderValueChange(_ slider:Slider) -> Void {
         _sliderIsTouching = true
+        debugPrint("\(slider.value,self.totalTime)")
         self.currentLabel.text = self.timeFormatted(totalSeconds: Int(slider.value! * self.totalTime!))
     }
     /// MARK:拖动结束
@@ -251,7 +252,7 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
     }
 
     func videoPlayerDidLoading() -> Void {
-        debugPrint("播放失败")
+        debugPrint("正在播放")
         self.activityView.startAnimating()
     }
     
@@ -294,8 +295,9 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
         
         let seconds = totalSeconds % 60;
         let minutes = (totalSeconds / 60) % 60;
-        
-        return String.init(format: "%02d:%02d",minutes, seconds)
+        let result = String.init(format: "%02d:%02d",minutes, seconds)
+                
+        return result
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
@@ -311,7 +313,7 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
         let x = self.currentLabel.frame.maxX
         let w = self._frame.size.width - x - self.totalLabel.frame.width - 20
         
-        let v = Slider.init(frame: CGRect.init(x: x + 5, y: 0, width: w, height: self.BottomHeight))
+        let v:Slider = Slider.init(frame: CGRect.init(x: x + 5, y: 0, width: w, height: self.BottomHeight))
         
         let normalImage = UIImage.createImage(UIColor.red, 5.0)
 
@@ -319,11 +321,17 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
         h.layer.cornerRadius = 6
         h.layer.masksToBounds = true
         h.backgroundColor = UIColor.red
-        let hi = UIImage.creatImage(h)
+        let highlightImage = UIImage.creatImage(h)
+        
+        v.setThumbImage(thumbImage: normalImage, state: .normal)
+        v.setThumbImage(thumbImage: highlightImage, state: .highlighted)
+        
         
         v.trackHeight = 1.5
         v.thumbVisibleSize = 12
+        //正在拖动
         v.addTarget(self, action: #selector(sliderValueChange(_:)), for: .valueChanged)
+        //拖动结束
         v.addTarget(self, action: #selector(sliderTouchEnd(_:)), for: .editingDidEnd)
         self.bottomView.addSubview(v)
         
@@ -358,8 +366,8 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
     /// MARK:播放/暂停
     private lazy var playButton: UIButton = {
         let p = UIButton.init(type: .custom)
-        p.setImage(UIImage.init(named: "video_play"), for: .normal)
-        p.setImage(UIImage.init(named: "video_pause"), for: .selected)
+        p.setImage(UIImage.init(named: "video_play@2x.png"), for: .normal)
+        p.setImage(UIImage.init(named: "video_pause@2x.png"), for: .selected)
         p.addTarget(self, action: #selector(playButtonClick(_:)), for: .touchUpInside)
         self.bottomView.addSubview(p)
         
@@ -450,13 +458,13 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
     private lazy var volumeView: MPVolumeView = {
         let v = MPVolumeView.init()
         v.sizeToFit()
-        /**
+        
         for view:UIView in v.subviews{
-            if (view.){
-                self.volumeViewSlider = view as ;
+            if (view.description == "MPVolumeSlider"){
+                self.volumeViewSlider = view as? UISlider;
                 break;
             }
-        }*/
+        }
         
         return v
     }()

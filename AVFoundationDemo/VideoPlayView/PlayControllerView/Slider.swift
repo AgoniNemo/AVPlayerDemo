@@ -16,17 +16,14 @@ class Slider: UIControl {
     private var _bufferProgress:CGFloat = 0.0
     private var _value:CGFloat = 0.0
     
-    
     // MARK: 播放进度
     var value:CGFloat?{
     
         set(v){
-            _value = v!
             let value = self.valid(v!)
-            
-            if value != self.value {
-                self.value = value
-                self.thumb.center = self.getThumbCenterWithValue(value)
+            if value != _value {
+                _value = value
+                self.thumb.center = self.getThumbCenterWithValue(_value)
                 self.thumbValueImageView.frame = CGRect(x:0, y:(_frame.size.height - self.trackHeight!) * 0.5, width:value * _frame.size.width, height:self.trackHeight!)
             }
         }
@@ -37,9 +34,9 @@ class Slider: UIControl {
     // MARK: 缓冲进度
     var bufferProgress:CGFloat{
         set(progress){
-            _bufferProgress = progress
-            if progress != self.bufferProgress {
-                self.bufferProgress = progress
+            let b = self.valid(progress)
+            if _bufferProgress != b {
+                _bufferProgress = b
                 self.bufferImageView.frame = CGRect(x:0, y:(_frame.size.height - self.trackHeight!) * 0.5, width:progress * _frame.size.width, height:self.trackHeight!)
             }
         }
@@ -54,13 +51,17 @@ class Slider: UIControl {
         didSet{
             self.setFrame()
         }
-        
     }
     
     // MARK: 滑块触发大小的宽高
     var thumbTouchSize:CGFloat = 0
+    
     // MARK: 滑块可视大小的宽高
-    var thumbVisibleSize:CGFloat = 10
+    var thumbVisibleSize:CGFloat?{
+        didSet{
+            self.setFrame()
+        }
+    }
     
     // MARK: 轨道的颜色
     var trackColor:UIColor?{
@@ -70,7 +71,6 @@ class Slider: UIControl {
         }
         get{ return self.trackColor }
     }
-    
     
     
     // MARK: 缓冲的颜色
@@ -92,8 +92,9 @@ class Slider: UIControl {
         _frame = frame
         self.backgroundColor = UIColor.clear
         self.thumbTouchSize = frame.height
-        self.trackHeight = 2
-        self.thumbVisibleSize = 10
+        
+        thumbVisibleSize = 10
+        trackHeight = 2
         
         self.setFrame()
     }
@@ -123,15 +124,21 @@ class Slider: UIControl {
         
         
         self.thumb.frame =  CGRect.init(x: 0, y: 0, width: self.thumbTouchSize, height: self.thumbTouchSize);
-        self.thumb.center = self.getThumbCenterWithValue(self.value!)
+        self.thumb.center = self.getThumbCenterWithValue(value!)
         
-        self.thumbImageView.frame =  CGRect.init(x: (self.thumbTouchSize - self.thumbVisibleSize) * 0.5, y: (self.thumbTouchSize - self.thumbVisibleSize) * 0.5, width: self.thumbVisibleSize, height: self.thumbVisibleSize)
+        self.thumbImageView.frame =  CGRect.init(x: (self.thumbTouchSize - self.thumbVisibleSize!) * 0.5, y: (self.thumbTouchSize - self.thumbVisibleSize!) * 0.5, width: self.thumbVisibleSize!, height: self.thumbVisibleSize!)
+        
+        
+        /**
+        debugPrint(self.trackImageView.frame)
+        debugPrint(self.bufferImageView.frame)
+        debugPrint(self.thumbValueImageView.frame)
+        debugPrint(self.thumb.frame)
+        debugPrint(self.thumbImageView.frame)
+         */
     }
     
     
-    func setThumb() -> Void {
-        
-    }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -185,7 +192,7 @@ class Slider: UIControl {
         let t = UIImageView()
         t.layer.masksToBounds = true
         t.backgroundColor = UIColor.white
-        self.addSubview(t)
+        self.thumb.addSubview(t)
         return t
     }()
     
@@ -201,9 +208,9 @@ class Slider: UIControl {
     
     func getThumbCenterWithValue(_ value:CGFloat) -> CGPoint {
         
-        let x = self.thumbVisibleSize * 0.5 + (_frame.size.width - self.thumbVisibleSize) * value
+        let x = self.thumbVisibleSize! * 0.5 + (_frame.size.width - self.thumbVisibleSize!) * value
         let y = _frame.size.height * 0.5
-        
+        debugPrint("\(x,y,value)")
         return CGPoint.init(x: x, y: y)
     }
     
@@ -226,6 +233,7 @@ class Slider: UIControl {
         if (location.x <= self.bounds.width + 10 && location.x >= -10) {
             self.thumbImageView.isHighlighted = true;
             self.value = location.x / self.bounds.width;
+            debugPrint(self.value!)
             self.sendActions(for: .valueChanged)
         }
         return true;

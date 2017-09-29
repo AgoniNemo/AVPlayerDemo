@@ -11,22 +11,24 @@ import UIKit
 class ViewController: UIViewController,VideoPlayerDelegate {
 
     
-    var _isHalfScreen:Bool = false
+    var _isHalfScreen:Bool = true
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.view.backgroundColor = UIColor.white
+        
         self.videoPlayBGView.backgroundColor = UIColor.black
         
-        let url  = "http://ouprdwinp.bkt.clouddn.com/%E6%B5%B7%E8%B4%BC%E7%8E%8B%E7%B2%BE%E5%BD%A9%E5%89%AA%E8%BE%91.mp4"
+        let url  = "http://www.qylsp7.com/file/35461/3/faddaa11f87ebbce542c/1506578072/mp4/35461.mp4"
         self.videoPlayer.playConfig(url, view: self.videoPlayBGView)
     }
     
     func videoPlayerDidBackButtonClick() {
         
         _isHalfScreen = !_isHalfScreen
-        
+        debugPrint("-----------:\(_isHalfScreen)")
         if _isHalfScreen == true {
             
             UIDevice.current.setValue(NSNumber.init(value: 3), forKey: "orientation")
@@ -46,6 +48,25 @@ class ViewController: UIViewController,VideoPlayerDelegate {
     
     func videoPlayerDidFullScreenButtonClick() {
         
+        _isHalfScreen = !_isHalfScreen
+        debugPrint("==========:\(_isHalfScreen)")
+        if _isHalfScreen == true {
+            
+            UIDevice.current.setValue(NSNumber.init(value: 3), forKey: "orientation")
+            UIDevice.current.setValue(NSNumber.init(value: 1), forKey: "orientation")
+            UIView.animate(withDuration: 0.5, animations: {
+                self.videoPlayBGView.frame = CGRect.init(x: 0, y: 100, width: self.view.frame.width, height: self.view.frame.width*0.6)
+            })
+        }else{
+            UIDevice.current.setValue(NSNumber.init(value: 1), forKey: "orientation")
+            UIDevice.current.setValue(NSNumber.init(value: 3), forKey: "orientation")
+            UIView.animate(withDuration: 0.5, animations: {
+                self.videoPlayBGView.frame = self.view.bounds
+            })
+
+        }
+        self.navigationController?.navigationBar.isHidden = !_isHalfScreen
+        self.videoPlayer.fullScreen(!_isHalfScreen)
     }
     
     lazy var videoPlayer: VideoPlayer = {
@@ -60,6 +81,29 @@ class ViewController: UIViewController,VideoPlayerDelegate {
         
         return view
     }()
+    
+    override var shouldAutorotate: Bool{
+        
+        return true
+    }
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask
+        {
+        
+//        debugPrint(_isHalfScreen)
+        
+        if _isHalfScreen{
+            return .portrait
+        }
+        
+        return .landscape
+        
+    }
+    deinit {
+//        self.videoPlayer.stopVideo()
+        debugPrint("释放:\(self)")
+    }
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

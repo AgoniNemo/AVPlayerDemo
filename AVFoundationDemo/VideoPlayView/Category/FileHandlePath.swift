@@ -15,8 +15,8 @@ extension String{
         
         // NSHomeDirectory() + "/tmp"
         
-        let tmpPath = NSTemporaryDirectory() + "/\(name)"
-        
+        let tmpPath = NSTemporaryDirectory() + "\(name)"
+
         return tmpPath
     }
     
@@ -33,14 +33,15 @@ extension String{
     
     static func cacheFilePath(fileName name:String) -> String {
         
-        let cachePaths = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.cachesDirectory,FileManager.SearchPathDomainMask.userDomainMask, true)
+        let cachePaths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
         
         guard let cachePath = cachePaths.first else {
             debugPrint("cacheFilePath 出错!\(name)")
             return ""
         }
         
-        return cachePath + "/Moment_Videos/\(name)"
+        let path = cachePath + "/Videos/\(name)"
+        return path
         
     }
     

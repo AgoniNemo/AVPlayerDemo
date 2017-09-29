@@ -20,6 +20,7 @@
 		BA23D18B1F74C8920064317D /* video_pause@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BA23D1861F74C8920064317D /* video_pause@2x.png */; };
 		BA23D18C1F74C8920064317D /* video_play@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BA23D1871F74C8920064317D /* video_play@2x.png */; };
 		BA23D18E1F74C8FB0064317D /* Slider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA23D18D1F74C8FB0064317D /* Slider.swift */; };
+		BA631EB71F7E4FB600594D82 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA631EB61F7E4FB600594D82 /* TestViewController.swift */; };
 		BA7567B91F79E99100464383 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA7567B81F79E99100464383 /* DownloadManager.swift */; };
 		BA893ED51F789F7C00D66E34 /* FileHandlePath.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA893ED41F789F7C00D66E34 /* FileHandlePath.swift */; };
 		BA893ED71F78A77400D66E34 /* UIImage + ComPress.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA893ED61F78A77400D66E34 /* UIImage + ComPress.swift */; };
@@ -65,6 +66,7 @@
 		BA23D1861F74C8920064317D /* video_pause@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "video_pause@2x.png"; sourceTree = "<group>"; };
 		BA23D1871F74C8920064317D /* video_play@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "video_play@2x.png"; sourceTree = "<group>"; };
 		BA23D18D1F74C8FB0064317D /* Slider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Slider.swift; sourceTree = "<group>"; };
+		BA631EB61F7E4FB600594D82 /* TestViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
 		BA7567B81F79E99100464383 /* DownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
 		BA893ED41F789F7C00D66E34 /* FileHandlePath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileHandlePath.swift; sourceTree = "<group>"; };
 		BA893ED61F78A77400D66E34 /* UIImage + ComPress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage + ComPress.swift"; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 				BA893EDA1F78AF9F00D66E34 /* Header */,
 				BA23D1801F74C8440064317D /* VideoPlayView */,
 				BA23D1521F74BF980064317D /* AppDelegate.swift */,
+				BA631EB61F7E4FB600594D82 /* TestViewController.swift */,
 				BA23D1541F74BF980064317D /* ViewController.swift */,
 				BA23D1561F74BF980064317D /* Main.storyboard */,
 				BA23D1591F74BF980064317D /* Assets.xcassets */,
@@ -340,6 +343,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA631EB71F7E4FB600594D82 /* TestViewController.swift in Sources */,
 				BA893ED71F78A77400D66E34 /* UIImage + ComPress.swift in Sources */,
 				BA893EDC1F78AF9F00D66E34 /* PrefixHeader.swift in Sources */,
 				BA893ED51F789F7C00D66E34 /* FileHandlePath.swift in Sources */,
