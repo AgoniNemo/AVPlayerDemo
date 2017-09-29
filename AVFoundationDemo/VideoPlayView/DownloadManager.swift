@@ -37,7 +37,7 @@ class DownloadManager:NSObject,URLSessionDataDelegate {
     private var videoUrl:String = ""
     private let fileManager = FileManager.default
     private var fileHandle:FileHandle?
-    private var curruentLength:UInt64 = 0
+    private var curruentLength:CGFloat = 0.0
     private var dataTask:URLSessionDataTask?
     private var totalLength:UInt64?
     
@@ -72,7 +72,7 @@ class DownloadManager:NSObject,URLSessionDataDelegate {
             
             if self.fileManager.fileExists(atPath: self.videoTempPath) {
                 self.fileHandle = FileHandle.init(forUpdatingAtPath: self.videoTempPath)
-                curruentLength = (self.fileHandle?.seekToEndOfFile())!
+                curruentLength = CGFloat((self.fileHandle?.seekToEndOfFile())!)
                 debugPrint("---当前目录已存在下载的临时文件：\(curruentLength)---")
             }else{
                 curruentLength = 0
@@ -124,7 +124,7 @@ class DownloadManager:NSObject,URLSessionDataDelegate {
         
         completionHandler(.allow)
         
-        totalLength = UInt64(response.expectedContentLength) + curruentLength
+        totalLength = UInt64(response.expectedContentLength) + UInt64(curruentLength)
         
         self.delegate?.didStartReceive(self, Int(videoLength!))
         
@@ -135,11 +135,11 @@ class DownloadManager:NSObject,URLSessionDataDelegate {
         
         fileHandle?.write(data)
         
-        curruentLength += UInt64(data.count)
+        curruentLength += CGFloat(data.count)
         
-        let progress = UInt64(1.0) * curruentLength / totalLength!
+        let progress = 1.0 * curruentLength / CGFloat(totalLength!)
         
-        self.delegate?.didReceiveManager(self, CGFloat(progress))
+        self.delegate?.didReceiveManager(self, progress)
         
         debugPrint("进度：\(progress)")
     }

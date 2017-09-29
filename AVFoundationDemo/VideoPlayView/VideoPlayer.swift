@@ -88,6 +88,7 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
         self.backgroundView = view
         self.videoShowView.frame = view.bounds
         self.videoPlayControl.frame = view.bounds
+        self.videoPlayControl.videoPlayerDidLoading()
         
         self.manager = DownloadManager.init(videoUrl, self)
         
@@ -347,9 +348,11 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
                 case .failed:
                     debugPrint("======== 播放失败")
                     self.showFailView(false)
+                    self.videoPlayControl.videoPlayerDidFailedPlay()
                 case .unknown:
-                    debugPrint("======== 播放失败")
+                    debugPrint("======== 播放unknown")
                     self.showFailView(false)
+                    self.videoPlayControl.videoPlayerDidFailedPlay()
                 }
         }else if keyPath == "loadedTimeRanges"{
             let current = self.availableDuration()
@@ -530,6 +533,7 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
             self?.delegate?.videoPlayerDidFullScreenButtonClick!()
         }
         
+        // 播放、暂停
         v.playButtonClick_block = {[weak self] (b)-> () in
             
             if b == true {

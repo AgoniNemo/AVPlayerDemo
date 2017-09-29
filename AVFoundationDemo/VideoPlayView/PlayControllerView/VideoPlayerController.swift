@@ -91,6 +91,7 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
         self.layer.masksToBounds = true
         
         self.setFrame()
+        
     }
     
     func setFrame() -> Void {
@@ -119,14 +120,19 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
         
         self.videoSlider.frame = CGRect(x:self.currentLabel.frame.maxX + 5, y:0, width:_frame.size.width - self.currentLabel.frame.maxX - self.totalLabel.frame.size.width - 20 , height:BottomHeight);
         
-        
     }
     
     func tapGestureTouch(_ tapGesture:UITapGestureRecognizer) -> Void {
         
+        self.hiddenTopViewAndBottomView()
+        
+    }
+    func hiddenTopViewAndBottomView() -> Void {
+        
         self.panGesture.isEnabled = _isToShowControl
         var topF:CGRect?
         var botF:CGRect?
+        
         if _isToShowControl == true {
             
             topF = CGRect.init(x: 0, y: 0, width: self._frame.width, height: self.TopHeight)
@@ -142,6 +148,7 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
         })
         
         _isToShowControl = !_isToShowControl;
+        
     }
     
     func panGestureTouch(_ panGestureTouch:UIPanGestureRecognizer) -> Void {
@@ -272,7 +279,13 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
     
     /// MARK:外部方法播放
     func playerControlPlay() -> Void {
+        self.playButton.isSelected = true
         self.activityView.isHidden = false
+        // 隐藏顶部与底部视图
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3.0) {
+            self.hiddenTopViewAndBottomView()
+        }
+        
     }
     
     /// MARK:外部方法暂停
