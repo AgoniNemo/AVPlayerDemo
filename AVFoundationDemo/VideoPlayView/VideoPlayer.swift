@@ -165,7 +165,9 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
     }
     
     private func addObserver() -> Void {
+        
         self.timeObserve = self.player?.addPeriodicTimeObserver(forInterval: CMTimeMake(1, 1), queue: DispatchQueue.main, using: { [weak self](time) in
+            debugPrint("---addObserver---")
             let current = CMTimeGetSeconds(time);
             let total = CMTimeGetSeconds((self?.currentPlayerItem?.duration)!);
             let progress = current / total;
@@ -223,16 +225,17 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
     }
     
     func didFailLoading(_ manager: DownloadManager, _ errorCode: Error) {
-        
+        debugPrint("下载出错error:\(errorCode)")
     }
     
     func didFileExisted(_ manager: DownloadManager, _ filePath: String) {
-        let url = URL.init(fileURLWithPath: self.videoUrl)
+        let url = URL.init(fileURLWithPath: filePath)
         self.getUrlToPlayVideo(url)
     }
     
     func didReceiveManager(_ manager: DownloadManager, _ progress: CGFloat) {
         
+        debugPrint("下载进度：\(progress)")
     }
     
     func didStartReceive(_ manager: DownloadManager, _ videoLength: Int) {
@@ -240,13 +243,14 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
     }
     
     func didFinishLoading(_ manager: DownloadManager, _ filePath: String) {
-        
+        debugPrint("---下载完成---")
     }
     
     // MARK: - NSNotification
     
     @objc func playerItemDidPlayToEnd(_ notification:Notification) -> Void {
-        self.player?.seek(to: CMTime.init(value: 0, timescale: 0), completionHandler: { [weak self](b) in
+        debugPrint("----播放结束---")
+        self.player?.seek(to: CMTime.init(value: 0, timescale: 1), completionHandler: { [weak self](b) in
             self?.player?.play()
         })
     }
@@ -361,7 +365,7 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
             
             let progress = current / totalDuration
             
-            debugPrint("============== 缓冲进度 - \(progress)")
+//            debugPrint("============== 缓冲进度 - \(progress)")
             self.videoPlayControl.progress = CGFloat(progress)
             self.videoPlayControl.totalTime = CGFloat(totalDuration)
             self.duration = CGFloat(totalDuration)

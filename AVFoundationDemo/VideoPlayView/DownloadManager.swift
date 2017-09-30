@@ -88,11 +88,20 @@ class DownloadManager:NSObject,URLSessionDataDelegate {
     }
     
     func sendHttpRequst() -> Void {
-        fileHandle?.seekToEndOfFile()
-        let url = URL.init(string: self.videoUrl)
-        var request = URLRequest.init(url: url!)
-        request.setValue("bytes=\(self.curruentLength)-", forHTTPHeaderField: "Range")
         
+        fileHandle?.seekToEndOfFile()
+        
+        let url = URL.init(string: videoUrl)
+        var request = URLRequest.init(url: url!)
+        
+        debugPrint("curruentLength:\(self.curruentLength)")
+        
+        //指定头信息  当前已下载的进度
+        request.setValue("bytes=\(Int(self.curruentLength))-", forHTTPHeaderField: "Range")
+        
+        debugPrint(request.allHTTPHeaderFields!)
+        
+        //创建请求
         dataTask = self.session.dataTask(with: request)
         
         dataTask?.resume()
@@ -103,11 +112,12 @@ class DownloadManager:NSObject,URLSessionDataDelegate {
     
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         let http = response as? HTTPURLResponse
-        let dic = http?.allHeaderFields
+        let dic:Dictionary = (http?.allHeaderFields)!
         
-        debugPrint(dic ?? Dictionary())
+        debugPrint(dic)
         
-        guard let content:String = dic?["Content-Range"] as? String else {
+        guard let content:String = dic["Content-Range"] as? String else {
+            debugPrint("---urlSession出错---")
             return
         }
 
@@ -122,9 +132,13 @@ class DownloadManager:NSObject,URLSessionDataDelegate {
             videoLength = Int64(length!)!
         }
         
+        //接受到响应的时候 告诉系统如何处理服务器返回的数据
         completionHandler(.allow)
         
+        //得到请求文件的数据大小
         totalLength = UInt64(response.expectedContentLength) + UInt64(curruentLength)
+        
+        debugPrint("请求文件的数据大小:\(String(describing: totalLength))")
         
         self.delegate?.didStartReceive(self, Int(videoLength!))
         
@@ -141,7 +155,7 @@ class DownloadManager:NSObject,URLSessionDataDelegate {
         
         self.delegate?.didReceiveManager(self, progress)
         
-        debugPrint("进度：\(progress)")
+        
     }
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
@@ -152,9 +166,10 @@ class DownloadManager:NSObject,URLSessionDataDelegate {
             let cachefileURL = URL.init(fileURLWithPath: self.videoCachePath)
             
             debugPrint("videoCachePath === \(self.videoTempPath)")
-            debugPrint("videoCachePath === \(self.videoCachePath)")
+            
             
             if self.fileManager.fileExists(atPath: self.videoCachePath) == false {
+                debugPrint("createDirectoryCachefileURL === \(self.videoCachePath)")
                 do {
                     try self.fileManager.createDirectory(atPath: self.videoCachePath, withIntermediateDirectories: true, attributes: nil)
                 } catch {
@@ -162,7 +177,7 @@ class DownloadManager:NSObject,URLSessionDataDelegate {
                 }
             }
             
-            if self.fileManager.fileExists(atPath: cachefileURL.path) {
+            if self.fileManager.fileExists(atPath: cachefileURL.path, isDirectory: nil) {
                 do {
                     try self.fileManager.removeItem(at: cachefileURL)
                 } catch {
@@ -184,7 +199,7 @@ class DownloadManager:NSObject,URLSessionDataDelegate {
         
     }
     
-    
+    //开始/继续
     func start() -> Void {
         debugPrint("---开始---")
         if self.dataTask == nil {
