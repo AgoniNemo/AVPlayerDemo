@@ -411,7 +411,7 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
     private lazy var backButton: UIButton = {
         
         let b = UIButton.init(type: UIButtonType.custom)
-        b.setImage(#imageLiteral(resourceName: "back.png"), for: .normal)
+        b.setImage(UIImage.init(named: "back@2x.png"), for: .normal)
         b.addTarget(self, action: #selector(backButtonClick(_:)), for: .touchUpInside)
         self.topView.addSubview(b)
         
