@@ -22,7 +22,7 @@ class ViewController: UIViewController,VideoPlayerDelegate {
         self.videoPlayBGView.backgroundColor = UIColor.black
         
         // http://www.qylsp8.com/file/35993/3/ed5165ea3aa9145c1938/1506774712/mp4/35993.mp4
-        let url  = "http://www.qylsp8.com/file/35924/3/5195ed9709d1478e25b9/1506786578/mp4/35924.mp4"
+        let url  = "http://www.qylsp8.com/file/29930/3/65f9075b9ac55c0f3ec2/1508239425/mp4/29930.mp4"
         self.videoPlayer.playConfig(url, view: self.videoPlayBGView)
     }
     

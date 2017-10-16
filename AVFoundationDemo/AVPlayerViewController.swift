@@ -21,7 +21,7 @@ class AVPlayerViewController: UIViewController {
         
         self.videoPlayBGView.backgroundColor = UIColor.red
 
-        let url = URL.init(string: "")
+        let url = URL.init(string: "http://www.qylsp8.com/file/29930/3/65f9075b9ac55c0f3ec2/1508239425/mp4/29930.mp4")
         let currentPlayerItem = AVPlayerItem.init(url: url!)
         player = AVPlayer.init(playerItem:currentPlayerItem)
         let currentPlayerLayer:AVPlayerLayer = AVPlayerLayer.init(player: player)
