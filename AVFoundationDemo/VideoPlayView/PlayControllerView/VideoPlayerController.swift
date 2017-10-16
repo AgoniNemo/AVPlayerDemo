@@ -78,7 +78,7 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
     
     var fastFastForwardAndRewind_block:((CGFloat)->())?;
     
-    var backButtonClick_block:((Void)->(Void))?;
+    var backButtonClick_block:(()->(Void))?;
     var fullScreenButtonClick_block:(()->())?;
     
     private var _frame:CGRect = CGRect.init();
@@ -245,7 +245,6 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
     /// MARK:拖动中
     func sliderValueChange(_ slider:Slider) -> Void {
         _sliderIsTouching = true
-        debugPrint("\(slider.value,self.totalTime)")
         self.currentLabel.text = self.timeFormatted(totalSeconds: Int(slider.value! * self.totalTime!))
     }
     /// MARK:拖动结束
@@ -276,6 +275,7 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
         debugPrint("播放失败")
         self.activityView.stopAnimating()
     }
+    
     
     /// MARK:外部方法播放
     func playerControlPlay() -> Void {

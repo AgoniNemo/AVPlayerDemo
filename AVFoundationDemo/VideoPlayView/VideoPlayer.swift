@@ -167,7 +167,7 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
     private func addObserver() -> Void {
         
         self.timeObserve = self.player?.addPeriodicTimeObserver(forInterval: CMTimeMake(1, 1), queue: DispatchQueue.main, using: { [weak self](time) in
-            debugPrint("---addObserver---")
+//            debugPrint("---addObserver---")
             let current = CMTimeGetSeconds(time);
             let total = CMTimeGetSeconds((self?.currentPlayerItem?.duration)!);
             let progress = current / total;
@@ -353,10 +353,12 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
                     debugPrint("======== 播放失败")
                     self.showFailView(false)
                     self.videoPlayControl.videoPlayerDidFailedPlay()
+                    self.dealWithDidPlayFailed()
                 case .unknown:
                     debugPrint("======== 播放unknown")
                     self.showFailView(false)
                     self.videoPlayControl.videoPlayerDidFailedPlay()
+                    self.dealWithDidPlayFailed()
                 }
         }else if keyPath == "loadedTimeRanges"{
             let current = self.availableDuration()
@@ -404,6 +406,36 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
         
         
     }
+    
+    private func dealWithDidPlayFailed() -> Void {
+        
+        let videoName:String = self.videoUrl.components(separatedBy: "/").last!
+        
+        let videoTempPath = String.tempFilePath(fileName: videoName)
+        
+        let videoCachePath = String.cacheFilePath(fileName: videoName)
+        
+        let fileManager = FileManager.default
+        
+         if fileManager.fileExists(atPath: videoCachePath) {
+            debugPrint("---删除缓存目录下已存在下载文件：\(videoCachePath)---")
+            do {
+                try fileManager.removeItem(atPath: videoCachePath)
+            } catch {
+                debugPrint("videoCachePath 删除失败！")
+            }
+         }
+        
+        if fileManager.fileExists(atPath: videoTempPath) {
+            debugPrint("---删除当前目录已存在下载的临时文件：\(videoTempPath)---")
+            do {
+                try fileManager.removeItem(atPath: videoTempPath)
+            } catch {
+                debugPrint("videoTempPath 删除失败！")
+            }
+        }
+    }
+
     
     private func handleBuffer() -> Void {
         

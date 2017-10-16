@@ -210,7 +210,6 @@ class Slider: UIControl {
         
         let x = self.thumbVisibleSize! * 0.5 + (_frame.size.width - self.thumbVisibleSize!) * value
         let y = _frame.size.height * 0.5
-        debugPrint("\(x,y,value)")
         return CGPoint.init(x: x, y: y)
     }
     
@@ -233,7 +232,7 @@ class Slider: UIControl {
         if (location.x <= self.bounds.width + 10 && location.x >= -10) {
             self.thumbImageView.isHighlighted = true;
             self.value = location.x / self.bounds.width;
-            debugPrint(self.value!)
+
             self.sendActions(for: .valueChanged)
         }
         return true;
