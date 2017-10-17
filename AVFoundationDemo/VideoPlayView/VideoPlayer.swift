@@ -191,7 +191,7 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
         //监听播放器的状态
         self.currentPlayerItem?.addObserver(self, forKeyPath: "status", options: .new, context: nil)
         
-        //监听播放器的状态
+        //监听播放器的缓冲进度
         self.currentPlayerItem?.addObserver(self, forKeyPath: "loadedTimeRanges", options: .new, context: nil)
         
         //监听播放器的状态
@@ -503,10 +503,13 @@ class VideoPlayer:NSObject,DownloadManagerDelegate {
     }
     
     private func handleShowViewSublayers() -> Void {
+        /**
         for layer in videoShowView.subviews {
             layer.layer.removeFromSuperlayer()
         }
         videoShowView.layer.addSublayer(self.currentPlayerLayer!)
+        */
+        videoShowView.layer.insertSublayer(self.currentPlayerLayer!, at: 0)
     }
     
     // MARK: - removeObserver

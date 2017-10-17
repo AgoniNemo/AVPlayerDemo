@@ -24,6 +24,8 @@ class ViewController: UIViewController,VideoPlayerDelegate {
         // http://www.qylsp8.com/file/35993/3/ed5165ea3aa9145c1938/1506774712/mp4/35993.mp4
         let url  = "http://www.qylsp8.com/file/29930/3/65f9075b9ac55c0f3ec2/1508239425/mp4/29930.mp4"
         self.videoPlayer.playConfig(url, view: self.videoPlayBGView)
+        
+        self.view.addSubview(self.tabView)
     }
     
     func videoPlayerDidBackButtonClick() {
@@ -35,7 +37,7 @@ class ViewController: UIViewController,VideoPlayerDelegate {
             UIDevice.current.setValue(NSNumber.init(value: 3), forKey: "orientation")
             UIDevice.current.setValue(NSNumber.init(value: 1), forKey: "orientation")
             UIView.animate(withDuration: 0.5, animations: { 
-                self.videoPlayBGView.frame = CGRect.init(x: 0, y: 100, width: self.view.frame.width, height: self.view.frame.width*0.6)
+                self.videoPlayBGView.frame = CGRect.init(x: 0, y: 20, width: self.view.frame.width, height: self.view.frame.width*0.6)
             })
             self.videoPlayer.fullScreen(!_isHalfScreen)
         }else{
@@ -56,7 +58,7 @@ class ViewController: UIViewController,VideoPlayerDelegate {
             UIDevice.current.setValue(NSNumber.init(value: 3), forKey: "orientation")
             UIDevice.current.setValue(NSNumber.init(value: 1), forKey: "orientation")
             UIView.animate(withDuration: 0.5, animations: {
-                self.videoPlayBGView.frame = CGRect.init(x: 0, y: 100, width: self.view.frame.width, height: self.view.frame.width*0.6)
+                self.videoPlayBGView.frame = CGRect.init(x: 0, y: 20, width: self.view.frame.width, height: self.view.frame.width*0.6)
             })
         }else{
             UIDevice.current.setValue(NSNumber.init(value: 1), forKey: "orientation")
@@ -77,10 +79,25 @@ class ViewController: UIViewController,VideoPlayerDelegate {
     }()
     
     lazy var videoPlayBGView: UIView = {
-        let view = UIView.init(frame: CGRect.init(x: 0, y: 100, width: self.view.frame.width, height: self.view.frame.width*0.6))
+        let view = UIView.init(frame: CGRect.init(x: 0, y: 20, width: self.view.frame.width, height: self.view.frame.width*0.6))
         self.view.addSubview(view)
         
         return view
+    }()
+    
+    
+    lazy var tabView: UITableView = {
+        let y = self.videoPlayBGView.frame.maxY
+        let t = UITableView.init(frame: XCGRect(0, y, SCREEN_WIDTH, SCREEN_HEIGH-y), style: .grouped)
+        t.delegate = self
+        t.dataSource = self
+        t.tableFooterView = UIView.init()
+        let l = UILabel.init(frame: XCGRect(0, 0, SCREEN_WIDTH, 40))
+        l.text = "在开始编辑此文件时，Android Studio 会提示当前工程还未配置 Kotlin，根据提示完成操作即可，或者可以在菜单栏中选择 Tools"
+        l.font = UIFont.systemFont(ofSize: 15)
+        l.numberOfLines = 0
+        t.tableHeaderView = l
+        return t
     }()
     
     override var shouldAutorotate: Bool{
@@ -111,6 +128,27 @@ class ViewController: UIViewController,VideoPlayerDelegate {
         // Dispose of any resources that can be recreated.
     }
 
+}
 
+extension ViewController:UITableViewDelegate,UITableViewDataSource{
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 0
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        var cell = tableView.dequeueReusableCell(withIdentifier: "ViewCell")
+        
+        if cell == nil {
+            cell = UITableViewCell.init(style: .default, reuseIdentifier: "ViewCell")
+        }
+        cell?.textLabel?.text = "\(indexPath.row)"
+        return cell!
+    }
+    
 }
 
