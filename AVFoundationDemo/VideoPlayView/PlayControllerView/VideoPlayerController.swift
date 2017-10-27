@@ -282,7 +282,7 @@ class VideoPlayerController: UIView,UIGestureRecognizerDelegate {
         self.playButton.isSelected = true
         self.activityView.isHidden = false
         // 隐藏顶部与底部视图
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3.0) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 5.0) {
             self.hiddenTopViewAndBottomView()
         }
         

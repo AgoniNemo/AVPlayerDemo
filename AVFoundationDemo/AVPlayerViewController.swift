@@ -22,7 +22,7 @@ class AVPlayerViewController: UIViewController {
         
         self.videoPlayBGView.backgroundColor = UIColor.lightGray
 
-        guard let url = URL.init(string: "http://www.qylsp8.com/file/29930/3/65f9075b9ac55c0f3ec2/1508239425/mp4/29930.mp4") else {
+        guard let url = URL.init(string: "http://ouprdwinp.bkt.clouddn.com/%E6%B5%B7%E8%B4%BC%E7%8E%8B%E7%B2%BE%E5%BD%A9%E5%89%AA%E8%BE%91.mp4") else {
             assertionFailure("url 有问题！")
             return
         }
@@ -43,7 +43,7 @@ class AVPlayerViewController: UIViewController {
         //监听播放器的缓冲进度
         playerItem.addObserver(self, forKeyPath: "loadedTimeRanges", options: .new, context: nil)
         
-        //监听播放器的状态
+        //监听播放器的播放缓冲区是否为空
         playerItem.addObserver(self, forKeyPath: "playbackBufferEmpty", options: .new, context: nil)
         /**
         for layer in videoPlayBGView.subviews {

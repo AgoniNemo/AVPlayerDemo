@@ -21,8 +21,7 @@ class ViewController: UIViewController,VideoPlayerDelegate {
         
         self.videoPlayBGView.backgroundColor = UIColor.black
         
-        // http://www.qylsp8.com/file/35993/3/ed5165ea3aa9145c1938/1506774712/mp4/35993.mp4
-        let url  = "http://www.qylsp8.com/file/29930/3/65f9075b9ac55c0f3ec2/1508239425/mp4/29930.mp4"
+        let url  = "http://ouprdwinp.bkt.clouddn.com/%E6%B5%B7%E8%B4%BC%E7%8E%8B%E7%B2%BE%E5%BD%A9%E5%89%AA%E8%BE%91.mp4"
         self.videoPlayer.playConfig(url, view: self.videoPlayBGView)
         
         self.view.addSubview(self.tabView)
@@ -59,6 +58,7 @@ class ViewController: UIViewController,VideoPlayerDelegate {
             UIDevice.current.setValue(NSNumber.init(value: 1), forKey: "orientation")
             UIView.animate(withDuration: 0.5, animations: {
                 self.videoPlayBGView.frame = CGRect.init(x: 0, y: 20, width: self.view.frame.width, height: self.view.frame.width*0.6)
+                
             })
         }else{
             UIDevice.current.setValue(NSNumber.init(value: 1), forKey: "orientation")
@@ -68,6 +68,8 @@ class ViewController: UIViewController,VideoPlayerDelegate {
             })
 
         }
+        let y = self.videoPlayBGView.frame.maxY
+        self.tabView.frame = XCGRect(0, y, SCREEN_WIDTH, SCREEN_HEIGH-y)
         self.navigationController?.navigationBar.isHidden = !_isHalfScreen
         self.videoPlayer.fullScreen(!_isHalfScreen)
     }
